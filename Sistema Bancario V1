@@ -1,0 +1,173 @@
+import time as t
+from datetime import datetime
+
+# VARIÁVEIS
+print("\n======================= ALE BANK ===========================")
+
+menu = """
+    [1] Depósito
+    [2] Saque
+    [3] Extrato
+    [0] Sair
+
+    ** => """
+
+saldo = float(0)
+limite = float(500.00)
+extrato = []
+num_saque = 0
+LIMITE_SAQUE = 3
+
+
+# FUNÇÕES
+def deposito():
+
+   
+
+    menu =  """
+        Valor do Depósito
+        ** => R$"""
+    
+    valor = input(menu)
+    valor_f = float(valor)
+    valor_formatado = "{:.2f}".format(valor_f)
+
+    confirmar = f"""
+                O valor do depósito é: R${valor_formatado}
+                """
+    
+    opcao = input(f"{confirmar}\nDigite: [1] Confirmar  [2] Cancelar  ** =>")
+
+    if opcao == "1":
+        if valor_f > 0:
+            print("Depósito de R$",valor_formatado, "confirmado.")
+
+            operacao = {
+            "operação": "Depósito",
+            "valor": valor_formatado,
+            "status": "Confirmado",
+            "data_hora": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            }
+            extrato.append(operacao)
+
+            t.sleep(1)
+            return valor_formatado
+        else:
+            print("### ATENÇÃO ###")
+            print("## Operação não foi efetuada, verifique o valor e refaça. ##")
+            deposito()
+
+    elif opcao == "2":
+        print("## Depósito Cancelado ##")
+        
+
+def saque():
+
+    
+    menu =  """
+        Valor do Saque
+        ** => R$"""
+    
+    valor = input(menu)
+    valor_f = float(valor)
+    valor_formatado = "{:.2f}".format(valor_f)
+
+    confirmar = f"""
+                O valor do saque é: R${valor_formatado}
+                """
+    
+    opcao = input(f"{confirmar}\nDigite: [1] Confirmar  [2] Cancelar  ** =>")
+
+    if opcao == "1":
+        if valor_f > 0:
+            if valor_f <= 500:
+                if valor_f <= saldo:
+                    print("Saque de R$",valor_formatado, "confirmado.")
+                    operacao = {
+                        "operação": "Saque",
+                        "valor": valor_formatado,
+                        "status": "Confirmado",
+                        "data_hora": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        }
+                    extrato.append(operacao)
+                        
+                    t.sleep(1)
+                    return valor_formatado
+                else:
+                    print("### ATENÇÃO ###")
+                    print("## Operação não foi efetuada por saldo insuficiente. ##")
+                    saque()
+            else:
+                print("### ATENÇÃO ###")    
+                print("## Operação não foi efetuada, valor maior que o limite de R$500.00 por saque. ##")
+                saque()
+            
+        else:
+            print("### ATENÇÃO ###")
+            print("## Operação não foi efetuada, verifique o valor e refaça. ##")
+            saque()
+
+    elif opcao == "2":
+        print("## Saque Cancelado ##")
+        
+
+    
+# INICIO
+
+while True:
+
+    opcao = input(menu)
+
+    if opcao == "1":
+        print("\n===== Depósito =====")
+        t.sleep(1)
+        resposta_dep = deposito()
+        if resposta_dep:
+            vlr_dep = float(resposta_dep)
+            saldo += vlr_dep
+                
+
+    elif opcao == "2":
+        print("\n===== Saque =====")
+        
+        t.sleep(1)
+        if num_saque < LIMITE_SAQUE:
+            resposta_saq = saque()
+            
+            if resposta_saq:  
+                vlr_sq = float(resposta_saq)
+                saldo -= vlr_sq
+                num_saque += 1
+        else:
+            print("### ATENÇÃO ###")    
+            print("## Limite de 3 saques diarios. ##")
+        
+
+    elif opcao == "3":
+        print("\n===== EXTRATO =====")
+
+        if not extrato:
+            print("## NÃO FORAM REALIZADAS MOVIMENTAÇÕES. ##")
+        else:
+            print(f"{'Data/Hora':20} | {'Operação':10} | {'Valor':10} | {'Status':10}")
+            print("-" * 60)
+
+            for op in extrato:
+                print(f"{op['data_hora']:20} | {op['operação']:10} | R$ {float(op['valor']):<8.2f} | {op['status']:10}")
+            
+            
+            valor_f = "{:.2f}".format(saldo)
+            print()
+            print(f"Disponivel p/ saque: R${valor_f}")
+        
+
+        
+        
+
+    
+
+
+    
+    
+    elif opcao == "0":
+        break
