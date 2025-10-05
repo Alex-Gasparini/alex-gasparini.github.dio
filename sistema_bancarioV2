@@ -1,0 +1,194 @@
+import time as t
+from datetime import datetime
+
+# VARIÁVEIS
+print("\n======================= ALE BANK ===========================")
+
+menu = """
+    [1] Depósito
+    [2] Saque
+    [3] Extrato
+    [0] Sair
+
+    ** => """
+
+saldo = float(0)
+limite = float(500.00)
+operacoes = []
+num_operacoes = 0
+LIMITE_OPERACOES = 10
+
+
+# FUNÇÕES
+def deposito(saldo, valor):
+
+    saldo += valor
+    valor_formatado = "{:.2f}".format(valor)
+            
+    operacao = {
+                "operação": "Depósito",
+                "valor": valor_formatado,
+                "status": "Confirmado",
+                "data_hora": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+               }
+    return saldo,operacao
+        
+            
+
+def saque(valor= float, saldo_saque=saldo):
+
+    saldo_saque -= valor
+    valor_formatado = "{:.2f}".format(valor) 
+    operacao = {
+                "operação": "Saque",
+                "valor": valor_formatado,
+                "status": "Confirmado",
+                "data_hora": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                }
+
+    return saldo_saque, operacao
+
+def extrato(saldo, operacoes):
+    print("\n===== EXTRATO =====")
+
+    if not operacoes:
+        print("## NÃO FORAM REALIZADAS MOVIMENTAÇÕES. ##")
+    else:
+        print(f"{'Data/Hora':20} | {'Operação':10} | {'Valor':10} | {'Status':10}")
+        print("-" * 60)
+        
+        for op in operacoes:
+            print(f"{op['data_hora']:20} | {op['operação']:10} | R$ {float(op['valor']):<8.2f} | {op['status']:10}")
+
+    print("-" * 60)
+    print(f"Saldo atual: R${saldo:.2f}\n")
+                
+            
+        
+        
+
+    
+# INICIO
+
+while True:
+
+    opcao = input(menu)
+    # DEPOSITO
+    if opcao == "1":
+        print("\n===== Depósito =====")
+        
+        if num_operacoes <= LIMITE_OPERACOES:
+
+            menu_dep =  """
+            Valor do Depósito
+            ** => R$"""
+            valor_dep = input(menu_dep)
+
+            valor_f_dep = float(valor_dep)
+            valor_formatado_dep = "{:.2f}".format(valor_f_dep)
+
+            confirmar_dep = f"""
+                        O valor do depósito é: R${valor_formatado_dep}
+                        """
+            
+            opcao_dep = input(f"{confirmar_dep}\nDigite: [1] Confirmar  [2] Cancelar  ** =>")
+            if opcao_dep == "1":
+                
+                if valor_f_dep > 0:
+                    resposta_dep = deposito(saldo, valor_f_dep)
+
+                    print("\n===== Depósito de R$",valor_formatado_dep, "confirmado. =====")
+
+                    saldo = resposta_dep[0]
+                    operacao_deposito = resposta_dep[1]
+                    operacoes.append(operacao_deposito)
+                    num_operacoes += 1
+                    
+                else:
+                    print("### ATENÇÃO ###")
+                    print("## Operação não foi efetuada, verifique o valor e refaça. ##")
+        
+            elif opcao_dep == "2":
+                print("## Depósito Cancelado ##")
+
+        else:
+            print("### ATENÇÃO ###")
+            print("## Você excedeu o número de operações do dia. ##")  
+
+
+    # SAQUE
+    elif opcao == "2":
+        print("\n===== Saque =====")
+        
+        if num_operacoes < LIMITE_OPERACOES:  
+
+            menu_saque =  """
+                Valor do Saque
+                ** => R$"""
+    
+            valor_saque = input(menu_saque)   
+
+            valor_f_saque = float(valor_saque)
+            valor_formatado_saque = "{:.2f}".format(valor_f_saque)
+
+            confirmar_saque = f"""
+                        O valor do saque é: R${valor_formatado_saque}
+                        """
+            
+            opcao_saque = input(f"{confirmar_saque}\nDigite: [1] Confirmar  [2] Cancelar  ** =>")
+
+            if opcao_saque == "1":
+                if valor_f_saque > 0:
+                    if valor_f_saque <= 500:
+
+                        if valor_f_saque <= saldo:
+
+                            resposta_saque = saque(valor_f_saque, saldo)
+                            saldo = resposta_saque[0]
+                
+                            print("Saque de R$",valor_f_saque, "confirmado.")
+                            operacoes.append(resposta_saque[1])
+                            num_operacoes += 1
+
+
+                        else:
+                            print("### ATENÇÃO ###")
+                            print("## Operação não foi efetuada por saldo insuficiente. ##")
+                     
+                    else:
+                        print("### ATENÇÃO ###")    
+                        print("## Operação não foi efetuada, valor maior que o limite de R$500.00 por saque. ##")
+                      
+
+                else:
+                    print("### ATENÇÃO ###")
+                    print("## Operação não foi efetuada, verifique o valor e refaça. ##")
+                    #saque()
+
+            elif opcao_saque == "2":
+                print("## Saque Cancelado ##")
+                    # if resposta_saq:  
+                    #     vlr_sq = float(resposta_saq)
+                    #     
+                    #     num_operacoes += 1
+
+        else:
+            print("### ATENÇÃO ###")
+            print("## Você excedeu o número de operações do dia. ##")   
+        
+
+    elif opcao == "3":
+        extrato(saldo, operacoes)
+        
+        
+
+        
+        
+
+    
+
+
+    
+    
+    elif opcao == "0":
+        break
